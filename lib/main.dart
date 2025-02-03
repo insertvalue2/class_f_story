@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
       // context 가 없는 곳에서 context를 사용할 수 있게 하는 방법
       navigatorKey: navigatorkey,
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: JoinPage(),
       // initialRoute: LoginPage(),
       routes: {
         "/login": (context) => LoginPage(),
