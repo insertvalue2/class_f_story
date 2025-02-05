@@ -3,6 +3,7 @@ import 'package:class_f_story/ui/pages/auth/join_page/join_page.dart';
 import 'package:class_f_story/ui/pages/auth/login_page/login_page.dart';
 import 'package:class_f_story/ui/pages/post/list_page/post_list_page.dart';
 import 'package:class_f_story/ui/pages/post/write_page/post_write_page.dart';
+import 'package:class_f_story/ui/pages/splash/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
       // context 가 없는 곳에서 context를 사용할 수 있게 하는 방법
       navigatorKey: navigatorkey,
       debugShowCheckedModeBanner: false,
-      home: JoinPage(),
+      home: SplashPage(),
       // initialRoute: LoginPage(),
       routes: {
         "/login": (context) => LoginPage(),

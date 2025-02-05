@@ -36,4 +36,18 @@ class UserRepository {
   }
 
   // 자동 로그인
+  // 매번 앱을 실행시 로그인 요청하는 것은 귀찮아!.
+  // ---> 서버 --> 인증 사용자 판별 ---> 인증 -> JWT 토큰
+  // 로그인 --> 로컬 --> JWT 토큰 (- 기기에서 토큰 꺼내서 다시 서버로 던저 봐야 한다.)
+  Future<Map<String, dynamic>> loginWithToken(String accessToken) async {
+    // (HTTP 메시지) dio 헤더 설정하는 방법 !!
+    Response response = await dio.post(
+      '/auto/login',
+      options: Options(
+        headers: {'Authorization': accessToken},
+      ),
+    );
+    Map<String, dynamic> responseBody = response.data;
+    return responseBody;
+  }
 }

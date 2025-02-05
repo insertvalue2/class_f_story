@@ -109,6 +109,62 @@ class SessionGVM extends Notifier<SessionUser> {
   }
 
   // 로그아웃 행위
+
+  // 로직 정리
+  // 0. 예외 처리
+  // 1. 디바이스 기기에 토큰 확인
+  // 2. 디바이스 토큰 유무 확인
+  // 3. 토큰 유효성 검사 ()
+  // 4. SessionUser 상태 갱신
+  // 5. dio 헤더에 토큰 다시 설정
+  // 6. 게시글 목록 페이지 이동 처리
+  Future<void> autoLogin() async {
+    try {
+      // 비동기 처리 --> 코드가 내려가지 않고 완료 될 때 까지 대기
+      // 1. 토큰을 디바이스에서 가져오기
+      // 2. JTW 토큰 유무 확인( 없을 경우, 있을 경우)
+      String? accessToken = await secureStorage.read(key: 'accessToken');
+
+      if (accessToken == null) {
+        Navigator.popAndPushNamed(mContext, '/login');
+        return; // 실행의 제어권 반납한다.
+      }
+
+      // 토큰이 있다면 user_repository
+      // success --> true, false 로직 설계
+      Map<String, dynamic> resBody =
+          await userRepository.loginWithToken(accessToken);
+
+      // success -->  false
+      // 서버 내부적으로 오류로 판결 처리
+      if (!resBody['success']) {
+        Navigator.popAndPushNamed(mContext, '/login');
+        return;
+      }
+
+      // success -->  true
+      // 상태 값으 변경할 때 불객 객체를 사용하자.( 깊은 복사 처리)
+      // 새로운 객체를 생성해서 넣자
+      // 다운 캐스팅
+      Map<String, dynamic> data = resBody['response'];
+      state = SessionUser(
+        id: data['id'],
+        username: data['username'],
+        accessToken: accessToken,
+        isLogin: true,
+      );
+      // 상태 변경 완료
+      // 혹시 ... dio 헤더에 accesstoken 을 다시 설정 하자.
+      dio.options.headers['Authorization'] = accessToken;
+
+      // 게시글 목록 화면으로 이동 처리
+      Navigator.popAndPushNamed(mContext, '/post/list');
+    } catch (e, stackTraace) {
+      ExceptionHandler.handleException('자동 로그인 중 오류 발생', stackTraace);
+      // 화면 파괴하면서 이동 처리
+      Navigator.popAndPushNamed(mContext, '/login');
+    }
+  }
 }
 
 // 창고 관리자 선언 (창고 - 뷰모델), 창고 어떤 관리해라 지정 !!
