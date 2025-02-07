@@ -1,3 +1,4 @@
+import 'package:class_f_story/ui/pages/post/write_page/widgets/post_write_body.dart';
 import 'package:flutter/material.dart';
 
 class PostWritePage extends StatelessWidget {
@@ -5,6 +6,9 @@ class PostWritePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(),
+      body: PostWriteBody(),
+    );
   }
 }

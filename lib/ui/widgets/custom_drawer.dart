@@ -26,7 +26,7 @@ class CustomDrawer extends ConsumerWidget {
                 // 기능2 -> 글쓰기 페이지로 이동
                 scaffoldKey.currentState!.openEndDrawer();
                 // 글쓰기 페이지 이동 처리
-                Navigator.pushNamed(context, 'post/write');
+                Navigator.pushNamed(context, '/post/write');
               },
               child: Text(
                 '글쓰기',
