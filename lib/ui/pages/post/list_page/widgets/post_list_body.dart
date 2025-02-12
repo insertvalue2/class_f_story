@@ -6,12 +6,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class PostListBody extends ConsumerWidget {
+import '../../../../../_core/utils/logger.dart';
+
+class PostListBody extends ConsumerStatefulWidget {
   const PostListBody({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // 상태 (데이터) 구독 ( 데이터가 변경되면 화면 자동 갱신)
+  ConsumerState<PostListBody> createState() => _PostListBodyState();
+}
+
+class _PostListBodyState extends ConsumerState<PostListBody> {
+  final RefreshController _refreshController = RefreshController();
+
+  @override
+  void dispose() {
+    _refreshController.dispose(); // 화면이 사라질 때 RefreshController 해제
+    super.dispose();
+  }
+
+  // ConsumerStatefulWidget 변경 하였기 때문에
+  // ref.listen() 더이상 메서드가 필요 없음
+  @override
+  Widget build(BuildContext context) {
+    logger.d('PostListBody 를 재 갱신 처리');
     PostList? model = ref.watch(postListProvider);
     PostListViewModel vm = ref.read(postListProvider.notifier);
 
@@ -19,15 +36,20 @@ class PostListBody extends ConsumerWidget {
       return Center(child: CircularProgressIndicator());
     } else {
       return SmartRefresher(
-        controller: vm.refreshController,
-        enablePullUp: true, // 아래로 스크롤 하면 동작 이벤트
-        onRefresh: () async => vm.init(),
-        enablePullDown: true, // 위로 당겨서 새로고침 기능
-        onLoading: () async => vm.nextList,
+        controller: _refreshController, // RefreshController를 View에서 관리
+        enablePullUp: true,
+        enablePullDown: true,
+        onRefresh: () async {
+          await vm.init();
+          _refreshController.refreshCompleted();
+        },
+        onLoading: () async {
+          await vm.nextList();
+          _refreshController.loadComplete();
+        },
         child: ListView.separated(
             itemBuilder: (context, index) => InkWell(
                   onTap: () {
-                    print('11111111111');
                     Navigator.push(
                       context,
                       MaterialPageRoute(

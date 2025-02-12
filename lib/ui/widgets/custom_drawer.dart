@@ -3,6 +3,8 @@ import 'package:class_f_story/data/gvm/session_gvm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/_vm/post_list_view_model.dart';
+
 class CustomDrawer extends ConsumerWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
   const CustomDrawer(this.scaffoldKey, {super.key});

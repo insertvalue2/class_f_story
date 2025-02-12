@@ -3,11 +3,10 @@
 // 그리고 상태 관리 까지
 
 import 'package:class_f_story/_core/utils/exception_handler.dart';
-import 'package:class_f_story/_core/utils/my_http.dart';
+import 'package:class_f_story/data/_vm/post_list_view_model.dart';
+import 'package:class_f_story/data/gvm/post_event_notifier.dart';
 import 'package:class_f_story/data/repository/post_repository.dart';
-import 'package:class_f_story/data/repository/user_repository.dart';
 import 'package:class_f_story/main.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -52,13 +51,16 @@ class PostWriteViewModel
 
       // 시스템 키보드가 있다면 자동 닫기
       FocusScope.of(mContext).unfocus();
-
-      // 게시글  완성 메세지
       ScaffoldMessenger.of(mContext)
-          .showSnackBar(SnackBar(content: Text('게시글 등록 완료')));
-
+          .showSnackBar(SnackBar(content: Text('게시글 작성 완료')));
       // 상태 갱신 처리
       state = (null, null, true);
+
+      // postEventProvider ( none.. 상태를 postCreate 상태를 변경 처리)
+      ref.read(postEventProvider.notifier).postCreate();
+
+      // 시글 목록 화면으로 이동할 때, 목록 뷰 모델을 강제 초기화하여 refreshController 충돌 방지
+      ref.invalidate(postListProvider);
     } catch (e, stackTrace) {
       ExceptionHandler.handleException('게시글 등록시 오류 발생', stackTrace);
     }
